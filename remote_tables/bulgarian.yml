@@ -1,0 +1,38 @@
+general:
+  name: Bulgarian
+  parents:
+    - cyrillic_generic
+
+roman_to_script:
+  map:
+    "SHT": "\u0429"
+    "Sht": "\u0429"
+    "sht": "\u0449"
+    "U\u0306": "\u042A"
+    # Mapping from precomposed non-MARC-8 Latin equivalent
+    "\u016C": "\u042A"
+    "u\u0306": "\u044A"
+    # Mapping from precomposed non-MARC-8 Latin equivalent
+    "\u016D": "\u044A"
+    "U\u0310": "\u046A"
+    "u\u0310": "\u046B"
+    # this conversion is ambiguous - \u042A is also theoretically possible
+    "\u02BA": "\u044A"
+    # upper case hard sign is unlikely to occur
+    "\u02BA\u0332": "\u042A"
+
+script_to_roman:
+  map:
+    "\u0429": "Sht"
+    "\u042A": "U\u0306"
+    # Capital letter hard sign at the end of a word (rare)
+    "\u042A%": "\u02BA\u0332"
+    "\u042C": "\u02B9\u0332"
+    "\u0449": "sht"
+    "\u044A": "u\u0306"
+    # Small letter hard sign at the end of a word (rare)
+    "\u044A%": "\u02BA"
+    "\u044C": "\u02B9"
+    "\u046A": "U\u0310"
+    "\u046B": "u\u0310"
+    

@@ -1,0 +1,23 @@
+---
+general:
+  name: Yiddish
+  case_sensitive: false
+
+options:
+  - id: loshn_koydesh
+    label: Loshn Koydesh
+    description: "Apply Loshn Koydesh vocalization."
+    type: boolean
+    default: false
+
+script_to_roman:
+  hooks:
+    post_config:
+      -
+        - yiddish_.s2r_post_config
+
+roman_to_script:
+  hooks:
+    post_config:
+      -
+        - yiddish_.r2s_post_config

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 3 App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            /* list-style-type: none; */
+            /* padding: 0; */
+        }
+        .box {
+            background: #fff;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .box-new{
+            background: #c7ffdd;
+            background: linear-gradient(180deg, rgba(199, 255, 221, 1) 0%, rgba(255, 255, 255, 1) 61%);
+        }
+        .box-removed{
+            background: #ffcccc;
+            background: linear-gradient(180deg, rgba(255, 204, 204, 1) 0%, rgba(255, 255, 255, 1) 61%);
+        }
+
+        .box-changed{
+            background: #decf78;
+            background: linear-gradient(180deg, rgba(222, 207, 120, 1) 0%, rgba(255, 255, 255, 1) 61%);        
+        }
+        summary{
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Your Vue app will be mounted here -->
+        <h1>{{ message }}</h1>
+
+        <div style="display: flex; gap: 20px;">
+            <div style="flex: 1;">
+                <div>
+                    <div>Files that only exist on DEV Server:</div>
+                    <ul>
+                        <li class="box" v-for="file in this.data.only_in_local" :key="file">
+                            <a style="color: inherit;" :href="'https://github.com/lcnetdev/ss-table-compare/blob/main/local_tables/' + file" target="_blank">{{ file }}</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+            <div style="flex: 1;">
+                <div>
+                    <div>Files that only exist on GITHUB REPO:</div>
+                    <ul>
+                        <li class="box" v-for="file in this.data.only_in_remote" :key="file">
+                            <a style="color: inherit;" :href="'https://github.com/lcnetdev/ss-table-compare/blob/main/remote_tables/' + file" target="_blank">{{ file }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            Changes made to DEV Server Files compared to GITHUB REPO:
+        </div>
+
+        <template v-for="file of Object.keys(data.shared_files)" :key="file">
+            <div style="margin-bottom: 2em;" v-if="data.shared_files[file] && data.shared_files[file].diff && Object.keys(data.shared_files[file].diff).length>0">
+                
+                <details>            
+                    <summary>{{ file }}</summary>
+                    <div>
+                        <a :href="'https://github.com/lcnetdev/ss-table-compare/blob/main/local_tables/' + file" target="_blank">View Local Version</a>
+                    </div>
+
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex: 1;">
+                            <div class="box box-new" v-if="data.shared_files[file].diff && data.shared_files[file].diff.dictionary_item_added && Object.keys(processItems(data.shared_files[file].diff.dictionary_item_added)).length > 0">
+                                <strong>Added Mappings:</strong>
+                                <ul>
+
+                                    <li v-for="key of Object.keys(processItems(data.shared_files[file].diff.dictionary_item_added))" :key="key">
+                                        
+                                        <span style="font-weight: bold;">{{ key }}</span>
+                                        <ul>
+                                            <li v-for="item of processItems(data.shared_files[file].diff.dictionary_item_added)[key]" :key="item">
+                                                {{ item }}
+                                            </li>
+                                        </ul>   
+                                    </li>
+                                    
+                                    
+
+                                    
+
+                                </ul>
+                                
+
+                            </div>
+                            <div v-else>No Added Mappings</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div class="box box-removed" v-if="data.shared_files[file].diff && data.shared_files[file].diff.dictionary_item_removed && Object.keys(processItems(data.shared_files[file].diff.dictionary_item_removed)).length > 0">
+                                <strong>Removed Mappings:</strong>
+                                <ul>
+                                    
+                                    <li v-for="key of Object.keys(processItems(data.shared_files[file].diff.dictionary_item_removed))" :key="key">
+                                        <span style="font-weight: bold;">{{ key }}</span>
+                                        <ul>
+                                            <li v-for="item of processItems(data.shared_files[file].diff.dictionary_item_removed)[key]" :key="item">
+                                                {{ item }}
+                                            </li>
+                                        </ul>   
+                                    </li>
+
+                                </ul>
+                                
+
+                            </div>
+                            <div v-else>No Removed Mappings</div>
+
+
+
+                        </div>
+                        <div style="flex: 1;">
+                            <div class="box box-changed" v-if="data.shared_files[file].diff && data.shared_files[file].diff.values_changed && Object.keys(processItems(data.shared_files[file].diff.values_changed)).length > 0">
+                                <strong>Changed Mappings:</strong>
+                                <ul>
+
+                                    <li v-for="key of Object.keys(processItems(data.shared_files[file].diff.values_changed))" :key="key">
+                                        <span style="font-weight: bold;">{{ key }}</span>
+                                        <ul>
+                                            <li v-for="item of processItems(data.shared_files[file].diff.values_changed)[key]" :key="item">
+                                                {{ item }}
+                                            </li>
+                                        </ul>   
+                                    </li>
+
+                                </ul>
+                                
+
+                            </div>
+                            <div v-else>No Removed Mappings</div>
+
+
+
+
+                        </div>                            
+                    </div>
+
+                    <details>
+                        <summary style="font-size: 1em; margin-left: 1em;">Look At Full Diff Code</summary>
+                        <code style="margin-left: 1em;"><pre style="background-color: white;">
+                            {{data.shared_files[file]}}
+                        </pre></code>
+                    </details>
+
+                </details>
+            </div>
+    </template>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    message: 'Hello Vue!',
+                    data:null
+                }
+            },
+
+            created() {
+                console.log('Vue app created!');
+                this.data = fetch('compare_output.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Data fetched:', data);
+                        this.message = data.message || 'Data loaded from 2025-07-28';
+                        this.data = data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        this.message = 'Failed to load data.';
+                    });
+            },
+
+            methods: {
+                processItems(items) {
+
+
+                    let result = {
+
+                    }
+
+                    if (Array.isArray(items)) {
+                        for (let i of items){
+
+                            if (typeof i == 'string') {
+
+                                let value
+                                try{
+                                    value = i.split('][')
+                                    value = value[value.length - 1]
+                                    value = value.split("'")[1]
+                                }
+                                catch (e) {
+                                    console.error('Error processing item:', i, e);
+                                    continue; // Skip this item if it fails to process
+                                }
+                                
+                                if (i.includes('script_to_roman')) {
+                                    if (!result['script_to_roman']) {
+                                        result['script_to_roman'] = [];
+                                    }
+                                    result['script_to_roman'].push(value);
+                                }else if (i.includes('roman_to_script')) {
+                                    if (!result['roman_to_script']) {
+                                        result['roman_to_script'] = [];
+                                    }
+                                    result['roman_to_script'].push(value);
+
+
+                                }else{
+                                    if (!result['other']) {
+                                        result['other'] = [];
+                                    }
+                                    result['other'].push(value);
+                                }
+
+
+                            }else{
+                                console.error('Unexpected item type:', typeof i, i);
+                            }
+
+                        }
+
+
+                    }else{
+
+                        console.log('Processing items:', items);
+
+                        for (let key of Object.keys(items)) {
+                            
+                            console.log('Processing key:', key);
+                            if (key.includes('script_to_roman')) {
+                                if (!result['script_to_roman']) {
+                                    result['script_to_roman'] = [];
+                                }
+                                result['script_to_roman'].push(`${JSON.stringify(items[key].old_value)} -> ${JSON.stringify(items[key].new_value)}`);
+                            }else if (key.includes('roman_to_script')) {
+                                if (!result['roman_to_script']) {
+                                    result['roman_to_script'] = [];
+                                }
+                                result['roman_to_script'].push(`${JSON.stringify(items[key].old_value)} -> ${JSON.stringify(items[key].new_value)}`);
+
+
+                            }else{
+                                if (!result['other']) {
+                                    result['other'] = [];
+                                }
+                                result['other'].push(key + " == " + `${JSON.stringify(items[key].old_value)} -> ${JSON.stringify(items[key].new_value)}`);
+                            }
+                        }
+
+                    }
+
+
+
+
+                    return result
+                }
+            }
+
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+general:
+  name: Tajik (Cyrillic)
+  parents:
+    - _cyrillic_base
+
+roman_to_script:
+  map:
+    "GH": "\u0492"
+    "Gh": "\u0492"
+    "gh": "\u0493"
+    "H\u0307": "\u04B2"
+    "h\u0307": "\u04B3"
+    "I\u0304": "\u04E2"
+    "i\u0304": "\u04E3"
+    "U\u0304": "\u04EE"
+    "u\u0304": "\u04EF"
+    "J": "\u04B6"
+    "j": "\u04B7"
+    "Q": "\u049A"
+    "q": "\u049B"
+
+script_to_roman:
+  map:
+    "\u0492": "Gh"
+    "\u0493": "gh"
+    "\u049A": "Q"
+    "\u049B": "q"
+    "\u04B2": "H\u0307"
+    "\u04B3": "h\u0307"
+    "\u04B6": "J"
+    "\u04B7": "j"
+    "\u04E2": "I\u0304"
+    "\u04E3": "i\u0304"
+    "\u04EE": "U\u0304"
+    "\u04EF": "u\u0304"
